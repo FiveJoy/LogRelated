@@ -1,9 +1,10 @@
 package com.ifeng.test;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
-
-import com.ifeng.liulu.mongoaction.MongoUtil;
 
 public class TestByLiulu {
 	static String[] keys = { "docid", "simid", "updateTurns", "unUpdateTurns", "hotParameter", "priorScore",
@@ -47,12 +48,30 @@ public class TestByLiulu {
 		return null;
 	}
 
-	public static void main(String[] args) {
-		MongoUtil.getConnect();
-		/*
-		 * MongoUtil.collection.drop(); System.out.println("win");
-		 */
-		MongoUtil.collection.dropIndexes();
+	private static boolean isSpecialTime(String cur_date) throws ParseException {
+		Calendar ca = Calendar.getInstance();// 得到一个Calendar的实例
+		Date today_date = new Date();
+		ca.setTime(today_date); // 设置时间为当前时间
+		ca.add(Calendar.DAY_OF_MONTH, -1); // 减1
+		Date lastDay = ca.getTime(); // 结果
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+		String laString = sdf1.format(lastDay);
+		if (laString.equals(cur_date)) {
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+			String cur_time = sdf.format(today_date);
+
+			ca.setTime(today_date);
+			ca.set(Calendar.HOUR_OF_DAY, 5);
+			ca.set(Calendar.MINUTE, 0);
+
+			if (today_date.before(ca.getTime())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static void main(String[] args) throws ParseException {
 
 	}
 }
